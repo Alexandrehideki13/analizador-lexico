@@ -6,8 +6,23 @@
         v-model="wordValue"
         type="text"
         placeholder="Insira sua entrada"
-        style="font-size: 12px; padding: 7px; margin-bottom: 30px"
+        style="font-size: 12px; padding: 7px, margin-bottom: 20px"
       />
+      <span
+        v-show="validations.length > 0"
+        :style="{
+          margin: '20px auto 20px auto',
+          color: validations.find((val) => val.status === false)
+            ? 'red'
+            : 'green'
+        }"
+      >
+        {{
+          validations.find((val) => val.status === false)
+            ? "Palavra inválida"
+            : "Palavra válida"
+        }}
+      </span>
       <li
         v-for="(validation, index) in validations"
         :key="index"
@@ -52,41 +67,43 @@ Esse projeto foi desenvolvido por:
   },
   methods: {
     verifyWord(word) {
-      const regexValidarPrimeiraLetra = /[bcdfglmnprstvxz]/i.test(word);
-      this.validations.push({
-        text: "A primeira letra deve ser uma consoante válida.",
-        status: regexValidarPrimeiraLetra ? true : false,
-      });
-
-      const regexValidarSequenciaDaPalavra =
-        /^([bcdfglmnprstvxz][aeiou])+[bcdfglmnprstvxz]?\d*$/i.test(
-          word.replace(/\s/g, "")
-        );
-      this.validations.push({
-        text: "A palavra deve alternar entre consoantes e vogais podendo haver sequência de números no final.",
-        status: regexValidarSequenciaDaPalavra ? true : false,
-      });
-
-      const regexExcecaoLetras = /[jwkyçhq]/i.test(word);
-      this.validations.push({
-        text: 'Não pode conter as letras "j, w, k, y, ç, h e q".',
-        status: regexExcecaoLetras ? false : true,
-      });
-
-      const regexExcecaoCaracteres = /[/()&%$#@!]/.test(word);
-      this.validations.push({
-        text: 'Não pode conter caracteres especiais como "/, (, ), &, %, $, #, @ e !".',
-        status: regexExcecaoCaracteres ? false : true,
-      });
-
-      this.validations.push({
-        text: "A palavra deverá ter no máximo 10 caracteres.",
-        status: word.length <= 10 ? true : false,
-      });
-
-      this.validations.push({
-        text: "Palavra começada pela letra Z ou X é uma palavra reservada.",
-      });
+      this.validations.push(
+        {
+          //? regexValidarPrimeiraLetra
+          text: "A primeira letra deve ser uma consoante válida.",
+          status: /^[bcdfglmnprstvxz]/i.test(word) ? true : false,
+        },
+        {
+          //? regexValidarSequenciaDaPalavra
+          text: "A palavra deve alternar entre consoantes e vogais podendo haver sequência de números no final.",
+          status: /^([bcdfglmnprstvxz][aeiou])+[bcdfglmnprstvxz]?\d*$/i.test(
+            word.replace(/\s/g, "")
+          )
+            ? true
+            : false,
+        },
+        {
+          //? regexExcecaoLetras
+          text: 'Não pode conter as letras "j, w, k, y, ç, h e q".',
+          status: /[jwkyçhq]/i.test(word) ? false : true,
+        },
+        {
+          //? regexExcecaoCaracteres
+          text: 'Não pode conter caracteres especiais como "/, (, ), &, %, $, #, @ e !".',
+          status: /[/()&%$#@!]/.test(word) ? false : true,
+        },
+        {
+          text: "A palavra deverá ter no máximo 10 caracteres.",
+          status: word.length <= 10 ? true : false,
+        },
+        ...(/^[zx]/i.test(word)
+          ? [
+              {
+                text: "Palavra começada com a letra Z ou X é uma palavra reservada.",
+              },
+            ]
+          : [])
+      );
     },
   },
 };
@@ -96,7 +113,6 @@ Esse projeto foi desenvolvido por:
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50vh;
 }
 .box {
   display: flex;
