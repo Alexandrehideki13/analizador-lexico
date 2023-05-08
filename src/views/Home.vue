@@ -6,28 +6,28 @@
         v-model="wordValue"
         type="text"
         placeholder="Insira sua entrada"
-        style="font-size: 12px; padding: 7px, margin-bottom: 20px"
+        style="padding: 10px; margin-bottom: 20px"
       />
-      <span
+      <h2
         v-show="validations.length > 0"
         :style="{
           margin: '20px auto 20px auto',
           color: validations.find((val) => val.status === false)
             ? 'red'
-            : 'green'
+            : 'green',
         }"
       >
         {{
           validations.find((val) => val.status === false)
-            ? "Palavra inválida"
-            : "Palavra válida"
+            ? `Palavra: "${wordValue.slice(0, 10)}" é inválida`
+            : `Palavra: "${wordValue.slice(0, 10)}" é válida`
         }}
-      </span>
+      </h2>
       <li
         v-for="(validation, index) in validations"
         :key="index"
         :style="{
-          'font-size': '0.8rem',
+          'font-size': '18px',
           color:
             validation.status === true
               ? 'green'
@@ -61,8 +61,10 @@ Esse projeto foi desenvolvido por:
   },
   watch: {
     wordValue(word) {
-      this.validations = [];
-      this.verifyWord(word);
+      if (word.length <= 10) {
+        this.validations = [];
+        this.verifyWord(word.slice(0, 10));
+      }
     },
   },
   methods: {
@@ -75,10 +77,10 @@ Esse projeto foi desenvolvido por:
         },
         {
           //? regexValidarSequenciaDaPalavra
-          text: "A palavra deve alternar entre consoantes e vogais podendo haver sequência de números no final.",
-          status: /^([bcdfglmnprstvxz][aeiou])+[bcdfglmnprstvxz]?\d*$/i.test(
+          text: "A palavra deve alternar entre consoantes e vogais podendo haver um algarismo numérico ao final.",
+          status: word.length > 2 ? /^([bcdfglmnprstvxz][aeiou])+[bcdfglmnprstvxz]?\d?$/i.test(
             word.replace(/\s/g, "")
-          )
+          ) : /^[bcdfglmnprstvxz][aeiou]?\d?/i.test(word)
             ? true
             : false,
         },
