@@ -19,8 +19,8 @@
       >
         {{
           validations.find((val) => val.status === false)
-            ? `Palavra: "${wordValue.slice(0, 10)}" é inválida`
-            : `Palavra: "${wordValue.slice(0, 10)}" é válida`
+            ? `Palavra: "${wordValue}" é inválida`
+            : `Palavra: "${wordValue}" é válida`
         }}
       </h2>
       <li
@@ -61,10 +61,8 @@ Esse projeto foi desenvolvido por:
   },
   watch: {
     wordValue(word) {
-      if (word.length <= 10) {
-        this.validations = [];
-        this.verifyWord(word.slice(0, 10));
-      }
+      this.validations = [];
+      this.verifyWord(word);
     },
   },
   methods: {
@@ -78,9 +76,9 @@ Esse projeto foi desenvolvido por:
         {
           //? regexValidarSequenciaDaPalavra
           text: "A palavra deve alternar entre consoantes e vogais podendo haver um algarismo numérico ao final.",
-          status: word.length > 2 ? /^([bcdfglmnprstvxz][aeiou])+[bcdfglmnprstvxz]?\d?$/i.test(
+          status: /^([bcdfglmnprstvxz][aeiou])+[bcdfglmnprstvxz]?\d?$/i.test(
             word.replace(/\s/g, "")
-          ) : /^[bcdfglmnprstvxz][aeiou]?\d?/i.test(word)
+          )
             ? true
             : false,
         },
@@ -102,6 +100,7 @@ Esse projeto foi desenvolvido por:
           ? [
               {
                 text: "Palavra começada com a letra Z ou X é uma palavra reservada.",
+                status: false,
               },
             ]
           : [])
