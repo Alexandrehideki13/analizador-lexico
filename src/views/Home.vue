@@ -19,8 +19,8 @@
       >
         {{
           validations.find((val) => val.status === false)
-            ? `Palavra: "${wordValue}" é inválida`
-            : `Palavra: "${wordValue}" é válida`
+            ? `Palavra: "${wordValue.slice(0, 10)}" é inválida`
+            : `Palavra: "${wordValue.slice(0, 10)}" é válida`
         }}
       </h2>
       <li
@@ -62,7 +62,7 @@ Esse projeto foi desenvolvido por:
   watch: {
     wordValue(word) {
       this.validations = [];
-      this.verifyWord(word);
+      this.verifyWord(word.slice(0, 10));
     },
   },
   methods: {
